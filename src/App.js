@@ -1,26 +1,72 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import { sampleText } from './sampleText'
+import marked from 'marked'
+
 
 class App extends Component {
+
+   state = {
+     text : sampleText
+   }
+
+   handleChange = event => {
+     const text = event.target.value;
+     
+     this.setState({text})
+     
+   }
+
+   handleText = (text) => {
+     const __html = marked(text,{sanitize:true})
+     return { __html }
+   }
+
+componentDidMount() {
+  const text  = localStorage.getItem('text');
+  if(text){
+    this.setState({text})
+  }
+  else{
+    this.setState({text:sampleText})
+  }
+
+
+}
+
+
+   componentDidUpdate() {
+     const { text } = this.state;
+     localStorage.setItem('text',text)
+
+    }
+
+  
+
+
   render() {
+const { text } = this.state;
+    
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="container">
+      <div className="row">
+      <div className="col-sm-6">
+      <textarea onChange={this.handleChange} value={text} className='form-control'  rows="35"></textarea>
       </div>
+
+      <div className="col-sm-6">
+      <div dangerouslySetInnerHTML={this.handleText(text)}></div>
+      
+      </div>
+
+
+      </div>
+      </div>
+
+      
+     
     );
   }
 }
